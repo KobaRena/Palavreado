@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termo - 6 Letras</title>
+    <style>
+        :root {
+            --cor-fundo: #f3f3f3;
+            --cor-texto: #212121;
+            --cor-certa: #6aaa64;
+            --cor-presente: #c9b458;
+            --cor-ausente: #787c7e;
+            --cor-borda: #d3d6da;
+            --cor-teclado: #d3d6da;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin: 20px 0;
+            font-size: 2.5rem;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .tabuleiro {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            grid-gap: 5px;
+            margin: 20px auto;
+            width: 420px;
+            height: 504px;
+        }
+
+        .linha {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-gap: 5px;
+        }
+
+        .letra {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 2px solid var(--cor-borda);
+            background-color: white;
+            border-radius: 4px;
+            user-select: none;
+        }
+
+        .letra.certa {
+            background-color: var(--cor-certa);
+            color: white;
+            border-color: var(--cor-certa);
+        }
+
+        .letra.presente {
+            background-color: var(--cor-presente);
+            color: white;
+            border-color: var(--cor-presente);
+        }
+
+        .letra.ausente {
+            background-color: var(--cor-ausente);
+            color: white;
+            border-color: var(--cor-ausente);
+        }
+
+        .teclado {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .linha-teclado {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .tecla {
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 15px 10px;
+            margin: 0 3px;
+            cursor: pointer;
+            background-color: var(--cor-teclado);
+            border: none;
+            border-radius: 4px;
+            text-transform: uppercase;
+            min-width: 30px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+        }
+
+        .tecla.certa {
+            background-color: var(--cor-certa);
+            color: white;
+        }
+
+        .tecla.presente {
+            background-color: var(--cor-presente);
+            color: white;
+        }
+
+        .tecla.ausente {
+            background-color: var(--cor-ausente);
+            color: white;
+        }
+
+        .tecla-grande {
+            width: 65px;
+            font-size: 0.8rem;
+        }
+
+        .mensagem {
+            height: 30px;
+            margin: 10px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-conteudo {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal h2 {
+            margin-top: 0;
+        }
+
+        .botao {
+            background-color: var(--cor-certa);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .botao:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 600px) {
+            .tabuleiro {
+                width: 360px;
+                height: 432px;
+            }
+            
+            .letra {
+                font-size: 1.5rem;
+            }
+            
+            .tecla {
+                padding: 10px 5px;
+                height: 45px;
+                min-width: 25px;
+                font-size: 0.9rem;
+            }
+            
+            .tecla-grande {
+                width: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>TERMO 6 LETRAS</h1>
+    
+    <div class="container">
+        <div class="mensagem" id="mensagem"></div>
+        
+        <div class="tabuleiro" id="tabuleiro"></div>
+        
+        <div class="teclado">
+            <div class="linha-teclado">
+                <div class="tecla" data-tecla="Q">Q</div>
+                <div class="tecla" data-tecla="W">W</div>
+                <div class="tecla" data-tecla="E">E</div>
+                <div class="tecla" data-tecla="R">R</div>
+                <div class="tecla" data-tecla="T">T</div>
+                <div class="tecla" data-tecla="Y">Y</div>
+                <div class="tecla" data-tecla="U">U</div>
+                <div class="tecla" data-tecla="I">I</div>
+                <div class="tecla" data-tecla="O">O</div>
+                <div class="tecla" data-tecla="P">P</div>
+            </div>
+            <div class="linha-teclado">
+                <div class="tecla" data-tecla="A">A</div>
+                <div class="tecla" data-tecla="S">S</div>
+                <div class="tecla" data-tecla="D">D</div>
+                <div class="tecla" data-tecla="F">F</div>
+                <div class="tecla" data-tecla="G">G</div>
+                <div class="tecla" data-tecla="H">H</div>
+                <div class="tecla" data-tecla="J">J</div>
+                <div class="tecla" data-tecla="K">K</div>
+                <div class="tecla" data-tecla="L">L</div>
+            </div>
+            <div class="linha-teclado">
+                <div class="tecla tecla-grande" data-tecla="Enter">Enter</div>
+                <div class="tecla" data-tecla="Z">Z</div>
+                <div class="tecla" data-tecla="X">X</div>
+                <div class="tecla" data-tecla="C">C</div>
+                <div class="tecla" data-tecla="V">V</div>
+                <div class="tecla" data-tecla="B">B</div>
+                <div class="tecla" data-tecla="N">N</div>
+                <div class="tecla" data-tecla="M">M</div>
+                <div class="tecla tecla-grande" data-tecla="Backspace">⌫</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="modal">
+        <div class="modal-conteudo">
+            <h2 id="modal-titulo">Parabéns!</h2>
+            <p id="modal-mensagem">Você acertou a palavra em X tentativas!</p>
+            <button class="botao" id="botao-reiniciar">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        // Lista de palavras válidas (6 letras)
+        const palavras = [
+    "exceto", "cínico", "idôneo", "âmbito", "néscio", "mister", "índole", "vereda", 
+    "defina", "apogeu", "inócuo", "convém", "utopia", "escopo", "sádico", "ênfase", 
+    "idiota", "alusão", "mérito", "casual", "hostil", "anseio", "cético", "legado", 
+    "gentil", "pressa", "hétero", "alheio", "paixão", "nocivo", "clichê", "infame", 
+    "exímio", "afável", "dádiva", "também", "adorno", "êxtase", "larica", "otário", 
+    "sóbrio", "astuto", "aferir", "adesão", "glória", "apreço", "hábito", "lábaro", 
+    "formal", "ímpeto", "nuance", "eficaz", "outrem", "dispor", "perene", "júbilo", 
+    "ocioso", "alento", "difuso", "ilação", "escusa", "cessão", "exílio", "facção", 
+    "lúdico", "objeto", "abster", "acesso", "alçada", "desejo", "mulher", "axioma", 
+    "acento", "buscar", "tácito", "etéreo", "quando", "sanção", "mazela", "cobiça", 
+    "cortês", "penhor", "isento", "sisudo", "eximir", "avidez", "prazer", "sempre", 
+    "vulgar", "receio", "fático", "remoto", "nômade", "rotina", "adágio", "insano", 
+    "esmero", "ciente", "asseio", "diante", "dúvida", "prover", "cômico", "grande", 
+    "linear", "lograr", "rancor", "altivo", "alocar", "amiúde", "coesão", "crença", 
+    "ironia", "melhor", "esteio", "enxuto", "lírico", "faceta", "vedado", "origem", 
+    "formos", "perfil", "inveja", "bíblia", "abjeto", "idônea", "padrão", "bélico", 
+    "apatia", "aderir", "cingir", "danado", "passar", "aludir", "beleza", "porfia", 
+    "cessar", "tácita", "adepto", "pensar", "espaço", "inerte", "menção", "desdém", 
+    "credor", "emanar", "herege", "método", "servir", "coagir", "trouxa", "enigma", 
+    "venham", "agonia", "bordão", "avante", "inútil", "arauto", "nativo", "estima", 
+    "arguir", "decoro", "adorar", "pessoa", "viagem", "lúcido", "limite", "brando", 
+    "lacuna", "franco", "esboço", "sereno", "lavrar", "maroto", "lícito", "colher", 
+    "ancião", "trazer", "engodo", "emoção", "apenas", "sovina", "estado", "cólera", 
+    "gênero", "iníquo", "senhor", "deixar", "conter", "tirano", "florão", "encher", 
+    "aguçar", "inibir", "ajudar", "práxis", "pleito", "fogosa", "secção", "dotado", 
+    "tópico", "súdito", "gênese", "amanhã", "clamar", "proeza", "mártir", "devido", 
+    "sentir", "teoria", "frisar", "prisma", "alarde", "esnobe", "forjar", "triste", 
+    "dicção", "piegas", "jamais", "feição", "acordo", "frugal", "emitir", "léxico", 
+    "fálico", "exalar", "dilema", "tornar", "vermos", "talvez", "sátira", "sabido", 
+    "quanto", "ínfimo", "exíguo", "inepto", "suprir", "aduzir", "missão", "cismar", 
+    "idílio", "provém", "divino", "almeja", "seguir", "pseudo", "semear", "abismo", 
+    "deriva", "evocar", "coação", "querer", "tríade", "função", "polido", "aporte", 
+    "demais", "depois", "social", "súbito", "galgar", "bênção", "condiz", "modelo", 
+    "pátria", "omitir", "bonito", "patife", "caçula", "lastro", "obtuso", "aurora", 
+    "apesar", "típico", "pueril", "elidir", "chapéu", "servil", "sermos", "comigo", 
+    "escuso", "alguns", "perdão", "esvair", "pudico", "índice", "plebeu", "mítico", 
+    "insumo", "cálido", "ilusão", "imagem", "arrimo", "tensão", "cerrar", "sínico", 
+    "compor", "manter", "início", "onerar", "matriz", "tratar", "xingar", "rápido", 
+    "enseja", "fulgor", "evento", "trouxe", "vetado", "patroa", "várias", "alguém", 
+    "cativo", "escola", "crível", "ousado", "agouro", "fraude", "estará", "devoto", 
+    "tímido", "coibir", "remota", "cassar", "ofício", "honrar", "cuidar", "estilo", 
+    "célere", "mácula", "fértil", "meados", "evasão", "labuta", "torpor", "voltar", 
+    "expert", "erigir", "afinco", "estais", "delito", "flanco", "acervo", "ilidir", 
+    "expiar", "peleja", "grátis", "viável", "saíram", "ceifar", "férias", "propor", 
+    "gestão", "tóxico", "loquaz", "porvir", "cínica", "status", "brasil", "motriz", 
+    "íntimo", "obstar", "ladino", "condão", "virgem", "avesso", "termos", "embate", 
+    "exação", "prezar", "efeito", "elogio", "feitio", "motivo", "língua", "pacato", 
+    "máxima", "chegar", "dentre", "helena", "regaço", "matuto", "poente", "tiriça", 
+    "tolher", "futuro", "chiste", "eterno", "acusar", "exigir", "adendo", "humano", 
+    "jovial", "sequer", "fábula", "alguma", "amável", "cidade", "acerca", "enredo", 
+    "lesado", "agente", "alegre", "rapina", "ofensa", "prévia", "erário", "umbral", 
+    "contém", "pranto", "oração", "quiser", "acatar", "destra", "fastio", "frouxo", 
+    "arguto", "bêbado", "colhão", "fulcro", "contra", "inócua", "abonar", "metido", 
+    "fadado", "abaixo", "oposto", "urbano", "evitar", "colega", "amante", "nítido", 
+    "gaiato", "jardim", "lisura", "charco", "dormir", "diacho", "afetar", "descer", 
+    "animal", "babaca", "munido", "jocoso", "possam", "côvado", "doença", "despir", 
+    "caução", "trevas", "gigolô", "surgir", "perder", "região", "cabeça", "boemia", 
+    "cômodo", "cafofo", "aflige", "cediço", "migrar", "lotado", "serena", "regalo", 
+    "cheque", "poesia", "áspero", "imoral", "velado", "omisso", "cânone", "emenda", 
+    "evadir", "branda", "cobaia", "caniço", "trecho", "casulo", "fechar", "vários", 
+    "torcer", "baixar", "música", "normal", "esfera", "louvor", "imerso", "purgar", 
+    "macaco", "tentar", "fofoca", "aceder", "classe", "inapto", "pairar", "contar", 
+    "alcova", "vívido", "gostar", "guerra", "fluido", "convir", "mestre", "lacaio", 
+    "antigo", "enfado", "título", "velada", "medida", "clímax", "romper", "relato", 
+    "cônego", "mentor", "cunhar", "tanger", "várzea", "tutela", "chance", "atraso", 
+    "pecado", "previa", "frágil", "ubíquo", "margem", "pregar", "cúpula", "branco", 
+    "estudo", "severo", "plural", "álcool", "nascer", "ficção", "prever", "versão", 
+    "chique", "primor", "moroso", "sofrer", "requer", "cobrir", "sustar", "cheiro", 
+    "abolir", "asceta", "afinal", "trauma", "astuta", "afoito", "ventre", "década", 
+    "jiboia", "prévio", "ínfima", "instar", "saciar", "diário", "porção", "abraço", 
+    "alegar", "brecha", "vieram", "igreja", "legião", "reduto", "símile", "vítima", 
+    "ansiar", "grosso", "enlace", "emular", "zombar", "fadiga", "render", "porque", 
+    "podido", "esteta", "avatar", "módulo", "artigo", "cartel", "tônica", "neutro", 
+    "aljava", "código", "abrigo", "ritual", "vexame", "adoção", "lívido", "árvore", 
+    "bruços", "nuança", "desuso", "errado", "tarefa", "avaria", "viajar", "açúcar", 
+    "findar", "sigilo", "arisco", "ufanar", "ósculo", "eivado", "ditoso", "mulato", 
+    "jargão", "fronte", "rígido", "aposto", "correr", "biltre", "manejo", "imundo", 
+    "cilada", "dentro", "grafar", "máximo", "amparo", "entrar", "abstém", "cotejo", 
+    "mostra", "guarda", "núcleo", "avulso", "apelar", "queijo", "acinte", "mordaz", 
+    "poupar", "pureza", "serrar", "adotar", "retido", "lógica", "divisa", "caxias", 
+    "defeso", "adular", "causar", "órbita", "alijar", "roubar", "amásia", "sobejo", 
+    "ameaça", "vileza", "planta", "arroio", "esposa", "crasso", "pautar", "exibir", 
+    "menina", "remido", "mandar", "sovaco", "maciço", "aflito", "hosana", "cúmulo", 
+    "regime", "figura", "portar", "fleuma", "iludir", "apurar", "arrasa", "amorfo", 
+    "leveza", "ladrão", "rincão", "lépido", "bibelô", "sacana", "iremos", "rotura", 
+    "bonita", "amuado", "esguio", "enviar", "consta", "reaver", "reação", "apoiar", 
+    "básico", "dirijo", "sentar", "mínimo", "versar", "oitiva", "prédio", "glutão", 
+    "captar", "cantar", "online", "sermão", "dízimo", "chamar", "verter", "pesado", 
+    "atento", "perito", "pendor", "design", "sonhar", "válido", "seguro", "aberto", 
+    "fresta", "maciça", "adição", "libido", "míngua", "acabar", "bocado", "inação", 
+    "etérea", "doente", "trégua", "agravo", "louvar", "redoma", "rainha", "charme", 
+    "bacana", "ganhar", "entoar", "opinar", "étnico", "saguão", "resumo", "díspar", 
+    "eunuco", "ementa", "fundir", "partir", "baleia", "atiçar", "última", "junção", 
+    "primar", "divina", "doação", "touché", "arriar", "lançar", "ensino", "avença", 
+    "gentio", "oculto", "pastor", "pedido", "relevo", "efusão", "traçar", "fúteis", 
+    "maturo", "açoite", "penoso", "danada", "tolice", "inepta", "violar", "burlar", 
+    "layout", "perigo", "chucro", "grotão", "arisca", "afeito", "grafia", "hígido", 
+    "insana", "começo", "espiar", "autuar", "exarar", "refugo", "sondar", "imenso", 
+    "xícara", "câmera", "fóssil", "sênior", "cordel", "sólido", "janota", "bradar", 
+    "noutro", "doçura", "sanado", "queixa", "moldar", "mediar", "aldeia", "alínea", 
+    "enlevo", "biruta", "elevar", "fôlego", "súmula", "alface", "avisar", "regato", 
+    "acenar", "curtir", "patrão", "enxada", "clamor", "guilda", "estase", "maloca", 
+    "bagaça", "anexar", "buraco", "erosão", "saudar", "equipe", "avocar", "agrura", 
+    "métier", "fausto", "coleta", "regras", "ciscar", "oferta", "galera", "cívico", 
+    "surtir", "denodo", "difusa", "sorver", "banana", "enorme", "maluco", "eirado", 
+    "inovar", "mestra", "anseia", "plágio", "viajem", "vigiar", "cavalo", "retiro", 
+    "postar", "formar", "morrer", "feijão", "horror", "janela", "flecha", "membro", 
+    "sertão", "capeta", "escuro", "dextro", "renovo", "muxoxo", "anomia", "debate", 
+    "apenso", "sucção", "rastro", "escala", "defesa", "físico", "acuado", "outros", 
+    "beócio", "girafa", "têxtil", "tépido", "fugido", "libelo", "cônsul", "número", 
+    "imóvel", "frente", "cedido", "páscoa", "enxame", "fétido", "vencer", "nenhum", 
+    "ônibus", "ignoto", "escore", "atrito", "manada", "abalar", "último", "queixo", 
+    "engano", "boneca", "inciso", "mentir", "elenco", "arrear", "caçoar", "sombra", 
+    "muitos", "visita", "chofer", "cadeia", "aragem", "gozado", "tardio", "pudica", 
+    "célula", "álgico", "bodega", "queira", "manjar", "médico", "elegia", "escuma", 
+    "salvar", "afasia", "vacina", "brilho", "mimoso", "áspera", "prenda", "pugnar", 
+    "juntar", "sorrir", "pendão", "cobrar", "tísico", "regido", "baiuca", "cabelo", 
+    "amargo", "felino", "cédula", "exitar", "abdome", "furtar", "xerife", "século", 
+    "imolar", "afagar", "croqui", "latino", "aborto", "templo", "morada", "complô", 
+    "mísera", "versus", "coelho", "glosar", "erguer", "impune", "pender", "turbar", 
+    "faxina", "lapela", "affair", "cabaré", "balela", "direto", "haurir", "adrede", 
+    "pôster", "néctar", "tenham", "medrar", "minuta", "tragar", "provir", "cafuçu", 
+    "cópula", "pronto", "sangue", "shalon", "levado", "carona", "sugiro", "variar", 
+    "miasma", "réstia", "chegue", "atinar", "mimado", "módico", "fixado", "óculos", 
+    "macete", "elixir"
+];
+        // Palavra secreta do dia (sempre a mesma por dia)
+        const hoje = new Date().toISOString().slice(0, 10); // Formato YYYY-MM-DD
+        const indicePalavra = hashCode(hoje) % palavras.length;
+        const palavraSecreta = palavras[indicePalavra];
+        
+        // Estado do jogo
+        let tentativaAtual = '';
+        let tentativas = [];
+        const maxTentativas = 6;
+        
+        // Elementos do DOM
+        const tabuleiro = document.getElementById('tabuleiro');
+        const mensagem = document.getElementById('mensagem');
+        const modal = document.getElementById('modal');
+        const modalTitulo = document.getElementById('modal-titulo');
+        const modalMensagem = document.getElementById('modal-mensagem');
+        const botaoReiniciar = document.getElementById('botao-reiniciar');
+        
+        // Teclado virtual
+        const teclas = document.querySelectorAll('.tecla');
+        
+        // Inicializa o jogo
+        function init() {
+            criarTabuleiro();
+            adicionarEventos();
+        }
+        
+        // Cria o tabuleiro vazio
+        function criarTabuleiro() {
+            tabuleiro.innerHTML = '';
+            
+            for (let i = 0; i < maxTentativas; i++) {
+                const linha = document.createElement('div');
+                linha.className = 'linha';
+                
+                for (let j = 0; j < 6; j++) {
+                    const letra = document.createElement('div');
+                    letra.className = 'letra';
+                    letra.id = `letra-${i}-${j}`;
+                    linha.appendChild(letra);
+                }
+                
+                tabuleiro.appendChild(linha);
+            }
+        }
+        
+        // Atualiza o tabuleiro com as tentativas
+        function atualizarTabuleiro() {
+            // Limpa todas as letras
+            for (let i = 0; i < maxTentativas; i++) {
+                for (let j = 0; j < 6; j++) {
+                    const letra = document.getElementById(`letra-${i}-${j}`);
+                    letra.textContent = '';
+                    letra.className = 'letra';
+                }
+            }
+            
+            // Preenche com as tentativas anteriores
+            for (let i = 0; i < tentativas.length; i++) {
+                const tentativa = tentativas[i];
+                
+                for (let j = 0; j < tentativa.length; j++) {
+                    const letra = document.getElementById(`letra-${i}-${j}`);
+                    letra.textContent = tentativa[j];
+                    
+                    if (palavraSecreta[j] === tentativa[j]) {
+                        letra.classList.add('certa');
+                        atualizarTeclado(tentativa[j], 'certa');
+                    } else if (palavraSecreta.includes(tentativa[j])) {
+                        letra.classList.add('presente');
+                        atualizarTeclado(tentativa[j], 'presente');
+                    } else {
+                        letra.classList.add('ausente');
+                        atualizarTeclado(tentativa[j], 'ausente');
+                    }
+                }
+            }
+            
+            // Preenche a tentativa atual
+            const linhaAtual = tentativas.length;
+            for (let j = 0; j < tentativaAtual.length; j++) {
+                const letra = document.getElementById(`letra-${linhaAtual}-${j}`);
+                letra.textContent = tentativaAtual[j];
+            }
+        }
+        
+        // Atualiza o estado das teclas no teclado virtual
+        function atualizarTeclado(letra, estado) {
+            teclas.forEach(tecla => {
+                if (tecla.textContent === letra) {
+                    // Só atualiza se não tiver um estado melhor
+                    if (!tecla.classList.contains('certa')) {
+                        tecla.classList.remove('presente', 'ausente');
+                        tecla.classList.add(estado);
+                    }
+                }
+            });
+        }
+        
+        // Adiciona eventos de teclado e clique
+        function adicionarEventos() {
+            // Teclado físico
+            document.addEventListener('keydown', handleKeyDown);
+            
+            // Teclado virtual
+            teclas.forEach(tecla => {
+                tecla.addEventListener('click', () => {
+                    const teclaValor = tecla.getAttribute('data-tecla');
+                    
+                    if (teclaValor === 'Enter') {
+                        enviarTentativa();
+                    } else if (teclaValor === 'Backspace') {
+                        apagarLetra();
+                    } else if (/^[A-Z]$/.test(teclaValor)) {
+                        adicionarLetra(teclaValor);
+                    }
+                });
+            });
+            
+            // Botão de reiniciar
+            botaoReiniciar.addEventListener('click', reiniciarJogo);
+        }
+        
+        // Manipula pressionamento de teclas
+        function handleKeyDown(e) {
+            if (e.key === 'Enter') {
+                enviarTentativa();
+            } else if (e.key === 'Backspace') {
+                apagarLetra();
+            } else if (/^[A-Za-z]$/.test(e.key)) {
+                adicionarLetra(e.key.toUpperCase());
+            }
+        }
+        
+        // Adiciona uma letra à tentativa atual
+        function adicionarLetra(letra) {
+            if (tentativaAtual.length < 6) {
+                tentativaAtual += letra;
+                atualizarTabuleiro();
+            }
+        }
+        
+        // Remove a última letra da tentativa atual
+        function apagarLetra() {
+            if (tentativaAtual.length > 0) {
+                tentativaAtual = tentativaAtual.slice(0, -1);
+                atualizarTabuleiro();
+            }
+        }
+        
+        // Envia a tentativa para validação
+        function enviarTentativa() {
+            if (tentativaAtual.length !== 6) {
+                mostrarMensagem('A palavra deve ter 6 letras!');
+                return;
+            }
+            
+            if (!palavras.includes(tentativaAtual)) {
+                mostrarMensagem('Palavra não reconhecida!');
+                return;
+            }
+            
+            tentativas.push(tentativaAtual);
+            
+            if (tentativaAtual === palavraSecreta) {
+                mostrarVitoria();
+            } else if (tentativas.length === maxTentativas) {
+                mostrarDerrota();
+            } else {
+                tentativaAtual = '';
+                mostrarMensagem('');
+            }
+            
+            atualizarTabuleiro();
+        }
+        
+        // Mostra mensagem de erro/sucesso
+        function mostrarMensagem(texto) {
+            mensagem.textContent = texto;
+        }
+        
+        // Mostra modal de vitória
+        function mostrarVitoria() {
+            modalTitulo.textContent = 'Parabéns!';
+            modalMensagem.textContent = `Você acertou a palavra "${palavraSecreta}" em ${tentativas.length} tentativa${tentativas.length > 1 ? 's' : ''}!`;
+            modal.style.display = 'flex';
+            document.removeEventListener('keydown', handleKeyDown);
+        }
+        
+        // Mostra modal de derrota
+        function mostrarDerrota() {
+            modalTitulo.textContent = 'Fim de jogo!';
+            modalMensagem.textContent = `A palavra correta era "${palavraSecreta}".`;
+            modal.style.display = 'flex';
+            document.removeEventListener('keydown', handleKeyDown);
+        }
+        
+        // Reinicia o jogo
+        function reiniciarJogo() {
+            modal.style.display = 'none';
+            tentativaAtual = '';
+            tentativas = [];
+            mostrarMensagem('');
+            criarTabuleiro();
+            atualizarTabuleiro();
+            
+            // Limpa o teclado
+            teclas.forEach(tecla => {
+                tecla.classList.remove('certa', 'presente', 'ausente');
+            });
+            
+            // Reativa eventos
+            document.addEventListener('keydown', handleKeyDown);
+        }
+        
+        // Função auxiliar para gerar hash de uma string
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = (hash << 5) - hash + char;
+                hash |= 0; // Converte para inteiro de 32 bits
+            }
+            return Math.abs(hash);
+        }
+        
+        // Inicia o jogo quando a página carrega
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
